@@ -3,6 +3,11 @@
 #include <fstream>
 using namespace std;
 
+struct UserData
+{
+    string username, password;
+};
+
 struct KoinKripto
 {
     int no;
@@ -156,54 +161,153 @@ void jualKripto(string nama, int jumlahJual)
     cout << "Kripto tidak ditemukan" << endl;
 }
 
+void registerUser()
+{
+    string username, password;
+    cout << "Masukkan username: ";
+    cin >> username;
+    cout << "Masukkan password: ";
+    cin >> password;
+
+    // Simpan data user ke file
+    ofstream file("users.csv", ios::app);
+    if (file.is_open())
+    {
+        file << username << " " << password << endl;
+        file.close();
+        cout << "Registrasi berhasil" << endl;
+    }
+    else
+    {
+        cout << "Gagal membuka file" << endl;
+    }
+}
+
+bool loginUser()
+{
+    string username, password;
+    cout << "Masukkan username: ";
+    cin >> username;
+    cout << "Masukkan password: ";
+    cin >> password;
+
+    // Baca data user dari file
+    ifstream file("users.txt");
+    if (file.is_open())
+    {
+        string storedUsername, storedPassword;
+        while (file >> storedUsername >> storedPassword)
+        {
+            if (storedUsername == username && storedPassword == password)
+            {
+                file.close();
+                cout << "Login berhasil" << endl;
+                return true;
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "Gagal membuka file" << endl;
+    }
+
+    cout << "Username atau password salah" << endl;
+    return false;
+}
+
 int main()
 {
     int pilihan;
+    bool isLoggedIn = false; // Track user login status
+
     do
     {
         cout << "\n=== MENU ===\n";
-        cout << "1. Beli Koin Kripto\n";
-        cout << "2. Jual Koin Kripto\n";
-        cout << "3. Tampilkan Koin Kripto yang Dibeli\n";
-        cout << "4. Tampilkan Koin Kripto yang Tersedia\n";
-        cout << "5. Keluar\n";
+        cout << "1. Register\n";
+        cout << "2. Login\n";
+        cout << "3. Beli Koin Kripto\n";
+        cout << "4. Jual Koin Kripto\n";
+        cout << "5. Tampilkan Koin Kripto yang Dibeli\n";
+        cout << "6. Tampilkan Koin Kripto yang Tersedia\n";
+        cout << "7. Keluar\n";
         cout << "Pilihan: ";
         cin >> pilihan;
 
         if (pilihan == 1)
         {
-            beliKoinKripto();
+            registerUser();
         }
         else if (pilihan == 2)
         {
-            string nama;
-            int jumlahJual;
-            tampilkanDaftarKoin();
-            cout << "Masukkan nama koin kripto yang ingin dijual: ";
-            cin >> nama;
-            cout << "Masukkan jumlah koin yang ingin dijual: ";
-            cin >> jumlahJual;
-            if (jumlahJual > 0)
+            if (loginUser())
             {
-                jualKripto(nama, jumlahJual);
-            }
-            else
-            {
-                cout << "Jumlah koin yang ingin dijual tidak valid\n";
+                isLoggedIn = true; // Set login status to true
+                cout << "Login berhasil" << endl;
             }
         }
         else if (pilihan == 3)
         {
-            cout << "\n=== KOIN KRIPTO YANG DIBELI ===\n";
-            displayBeli();
+            if (isLoggedIn)
+            {
+                beliKoinKripto();
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
         }
         else if (pilihan == 4)
         {
-            cout << "\n=== KOIN KRIPTO TERSEDIA ===\n";
-            tampilkanDaftarKoin();
+            if (isLoggedIn)
+            {
+                string nama;
+                int jumlahJual;
+                tampilkanDaftarKoin();
+                cout << "Masukkan nama koin kripto yang ingin dijual: ";
+                cin >> nama;
+                cout << "Masukkan jumlah koin yang ingin dijual: ";
+                cin >> jumlahJual;
+                if (jumlahJual > 0)
+                {
+                    jualKripto(nama, jumlahJual);
+                }
+                else
+                {
+                    cout << "Jumlah koin yang ingin dijual tidak valid\n";
+                }
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
+        }
+        else if (pilihan == 5)
+        {
+            if (isLoggedIn)
+            {
+                cout << "\n=== KOIN KRIPTO YANG DIBELI ===\n";
+                displayBeli();
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
+        }
+        else if (pilihan == 6)
+        {
+            if (isLoggedIn)
+            {
+                cout << "\n=== KOIN KRIPTO TERSEDIA ===\n";
+                tampilkanDaftarKoin();
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
         }
 
-    } while (pilihan != 5);
+    } while (pilihan != 7);
 
     Node *current = head;
     while (current != nullptr)
