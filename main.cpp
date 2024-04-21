@@ -170,7 +170,7 @@ void registerUser()
     cin >> password;
 
     // Simpan data user ke file
-    ofstream file("users.csv", ios::app);
+    ofstream file("users.txt", ios::app);
     if (file.is_open())
     {
         file << username << " " << password << endl;
