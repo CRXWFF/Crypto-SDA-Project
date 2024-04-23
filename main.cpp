@@ -70,6 +70,23 @@ void insertFirst(KoinKripto koin)
     }
 }
 
+void insertLast(KoinKripto koin)
+{
+    if (isEmpty())
+    {
+        insertFirst(koin);
+        return;
+    }
+
+    Node *newNode = new Node;
+    newNode->data = koin;
+    newNode->next = nullptr;
+    newNode->prev = tail;
+
+    tail->next = newNode;
+    tail = newNode;
+}
+
 void beliKripto(string nama, int jumlahBeli, double harga)
 {
     Node *current = head;
@@ -89,12 +106,12 @@ void beliKripto(string nama, int jumlahBeli, double harga)
 
     if (!koinDitemukan)
     {
-        // Jika koin belum pernah dibeli sebelumnya, lakukan insertFirst()
+
         KoinKripto koin;
         koin.nama = nama;
         koin.jumlah = jumlahBeli;
         koin.harga = harga;
-        insertFirst(koin);
+        insertLast(koin);
     }
 }
 
