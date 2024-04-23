@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 using namespace std;
-// ghaisan meledak
+
 struct UserData
 {
     string username, password;
@@ -50,25 +50,52 @@ void displayBeli()
     }
 }
 
+void insertFirst(KoinKripto koin)
+{
+    Node *newNode = new Node;
+    newNode->data = koin;
+    newNode->prev = nullptr;
+    newNode->next = head;
+
+    if (head != nullptr)
+    {
+        head->prev = newNode;
+    }
+
+    head = newNode;
+
+    if (tail == nullptr)
+    {
+        tail = newNode;
+    }
+}
+
 void beliKripto(string nama, int jumlahBeli, double harga)
 {
-    Node *kripto = new Node;
-    kripto->data.nama = nama;
-    kripto->data.jumlah = jumlahBeli;
-    kripto->data.harga = harga;
-    kripto->next = nullptr;
+    Node *current = head;
+    bool koinDitemukan = false;
 
-    if (isEmpty())
+    while (current != nullptr)
     {
-        head = tail = kripto;
+        if (current->data.nama == nama)
+        {
+            koinDitemukan = true;
+            current->data.jumlah += jumlahBeli;
+            cout << "Berhasil menambah " << jumlahBeli << " " << nama << endl;
+            break;
+        }
+        current = current->next;
     }
-    else
+
+    if (!koinDitemukan)
     {
-        tail->next = kripto;
-        kripto->prev = tail;
-        tail = kripto;
+        // Jika koin belum pernah dibeli sebelumnya, lakukan insertFirst()
+        KoinKripto koin;
+        koin.nama = nama;
+        koin.jumlah = jumlahBeli;
+        koin.harga = harga;
+        insertFirst(koin);
     }
-    cout << "Berhasil membeli " << jumlahBeli << " " << nama << endl;
 }
 
 void tampilkanDaftarKoin()
@@ -305,7 +332,7 @@ int main()
             }
         }
     } while (pilihan != 7);
-
+    cout << "Program Selesai" << endl;
     Node *current = head;
     while (current != nullptr)
     {
