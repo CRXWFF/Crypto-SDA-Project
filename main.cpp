@@ -278,7 +278,6 @@ void registerUser()
     cout << "Masukkan password: ";
     cin >> password;
 
-    // Simpan data user ke file
     ofstream file("users.txt", ios::app);
     if (file.is_open())
     {
@@ -300,7 +299,6 @@ bool loginUser()
     cout << "Masukkan password: ";
     cin >> password;
 
-    // Baca data user dari file
     ifstream file("users.txt");
     if (file.is_open())
     {
@@ -328,7 +326,7 @@ bool loginUser()
 int main()
 {
     int pilihan;
-    bool isLoggedIn = false; // Track user login status
+    bool isLoggedIn = false;
 
     do
     {
@@ -352,7 +350,7 @@ int main()
         {
             if (loginUser())
             {
-                isLoggedIn = true; // Set login status to true
+                isLoggedIn = true;
                 cout << "Login berhasil" << endl;
             }
         }
