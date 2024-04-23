@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 using namespace std;
-
+// ghaisan meledak
 struct UserData
 {
     string username, password;
@@ -86,115 +86,6 @@ void tampilkanDaftarKoin()
         cout << k.no << " " << "Nama: " << k.nama << ", Harga: " << k.harga << endl;
     }
 }
-
-// void insertAfter(KoinKripto koin, int position)
-// {
-//     Node *current = head;
-//     int count = 0;
-
-//     while (current != nullptr && count < position)
-//     {
-//         current = current->next;
-//         count++;
-//     }
-
-//     if (current == nullptr)
-//     {
-//         cout << "Invalid position" << endl;
-//         return;
-//     }
-
-//     Node *newNode = new Node;
-//     newNode->data = koin;
-//     newNode->next = current->next;
-//     newNode->prev = current;
-
-//     if (current->next != nullptr)
-//     {
-//         current->next->prev = newNode;
-//     }
-
-//     current->next = newNode;
-
-//     if (current == tail)
-//     {
-//         tail = newNode;
-//     }
-// }
-
-// void insertFirst(KoinKripto koin)
-// {
-//     Node *newNode = new Node;
-//     newNode->data = koin;
-//     newNode->prev = nullptr;
-//     newNode->next = head;
-
-//     if (head != nullptr)
-//     {
-//         head->prev = newNode;
-//     }
-
-//     head = newNode;
-
-//     if (tail == nullptr)
-//     {
-//         tail = newNode;
-//     }
-// }
-
-// void insertLast(KoinKripto koin)
-// {
-//     if (isEmpty())
-//     {
-//         insertFirst(koin);
-//         return;
-//     }
-
-//     Node *newNode = new Node;
-//     newNode->data = koin;
-//     newNode->next = nullptr;
-//     newNode->prev = tail;
-
-//     tail->next = newNode;
-//     tail = newNode;
-// }
-
-// void tradeCrypto(KoinKripto tradeAway, KoinKripto receive, int position)
-// {
-//     Node *current = head;
-//     Node *prev = nullptr;
-//     while (current != nullptr && current->data.no != tradeAway.no)
-//     {
-//         prev = current;
-//         current = current->next;
-//     }
-//     if (current == nullptr)
-//     {
-//         cout << "Mata Uang Kripto Tersebut Tidak Kamu Miliki!" << endl;
-//         return;
-//     }
-//     if (prev != nullptr)
-//     {
-//         prev->next = current->next;
-//     }
-//     else
-//     {
-//         head = current->next;
-//     }
-
-//     if (position == 0)
-//     {
-//         insertFirst(receive);
-//     }
-//     else if (position == -1)
-//     {
-//         insertLast(receive);
-//     }
-//     else
-//     {
-//         insertAfter(receive, position);
-//     }
-// }
 
 void beliKoinKripto()
 {
@@ -337,7 +228,6 @@ int main()
         cout << "4. Jual Koin Kripto\n";
         cout << "5. Tampilkan Koin Kripto yang Dibeli\n";
         cout << "6. Tampilkan Koin Kripto yang Tersedia\n";
-        // cout << "7. Tukar Kripto\n";
         cout << "7. Keluar\n";
         cout << "Pilihan: ";
         cin >> pilihan;
@@ -414,25 +304,6 @@ int main()
                 cout << "Anda harus login terlebih dahulu" << endl;
             }
         }
-        // else if (pilihan == 7)
-        // {
-        //     if (isLoggedIn)
-        //     {
-        //         string tradeAway, receive;
-        //         int position;
-        //         cout << "Masukkan nama koin kripto yang ingin ditukar: ";
-        //         cin >> tradeAway;
-        //         cout << "Masukkan nama koin kripto yang ingin diterima: ";
-        //         cin >> receive;
-        //         cout << "Masukkan posisi koin kripto yang ingin diterima (0 untuk pertama, -1 untuk terakhir): ";
-        //         cin >> position;
-        //         tradeCrypto({0, tradeAway, 0, 0}, {0, receive, 0, 0}, position);
-        //     }
-        //     else
-        //     {
-        //         cout << "Anda harus login terlebih dahulu" << endl;
-        //     }
-        // }
     } while (pilihan != 7);
 
     Node *current = head;
