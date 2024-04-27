@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <conio.h>
 using namespace std;
 
 struct UserData
@@ -204,53 +205,67 @@ void jualKripto(string nama, int jumlahJual)
     cout << "Kripto tidak ditemukan" << endl;
 }
 
-void registerUser()
-{
+void registerUser() {
     string username, password;
     cout << "Masukkan username: ";
     cin >> username;
+
     cout << "Masukkan password: ";
-    cin >> password;
+    char ch;
+    while ((ch = _getch()) != '\r') { 
+        if (ch == '\b') { 
+            if (password.length() > 0) {
+                cout << "\b \b";
+                password.pop_back();
+            }
+        } else {
+            cout << '*'; 
+            password += ch;
+        }
+    }
 
     ofstream file("users.txt", ios::app);
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         file << username << " " << password << endl;
         file.close();
-        cout << "Registrasi berhasil" << endl;
-    }
-    else
-    {
-        cout << "Gagal membuka file" << endl;
+        cout << endl << "Registrasi berhasil" << endl;
+    } else {
+        cout << endl << "Gagal membuka file" << endl;
     }
 }
 
-bool loginUser()
-{
+bool loginUser() {
     string username, password;
     cout << "Masukkan username: ";
     cin >> username;
+
     cout << "Masukkan password: ";
-    cin >> password;
+    char ch;
+    while ((ch = _getch()) != '\r') { 
+        if (ch == '\b') { 
+            if (password.length() > 0) {
+                cout << "\b \b";
+                password.pop_back();
+            }
+        } else {
+            cout << '*'; 
+            password += ch;
+        }
+    }
 
     ifstream file("users.txt");
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         string storedUsername, storedPassword;
-        while (file >> storedUsername >> storedPassword)
-        {
-            if (storedUsername == username && storedPassword == password)
-            {
+        while (file >> storedUsername >> storedPassword) {
+            if (storedUsername == username && storedPassword == password) {
                 file.close();
-                cout << "Login berhasil" << endl;
+                cout << endl << "Login berhasil" << endl;
                 return true;
             }
         }
         file.close();
-    }
-    else
-    {
-        cout << "Gagal membuka file" << endl;
+    } else {
+        cout << endl << "Gagal membuka file" << endl;
     }
 
     cout << "Username atau password salah" << endl;
@@ -269,11 +284,12 @@ int main()
         cout << "\n=== MENU ===\n";
         cout << "1. Register\n";
         cout << "2. Login\n";
-        cout << "3. Beli Koin Kripto\n";
-        cout << "4. Jual Koin Kripto\n";
-        cout << "5. Tampilkan Koin Kripto yang Dibeli\n";
-        cout << "6. Tampilkan Koin Kripto yang Tersedia\n";
-        cout << "7. Keluar\n";
+        cout << "3. Top up Saldo";
+        cout << "4. Beli Koin Kripto\n";
+        cout << "5. Jual Koin Kripto\n";
+        cout << "6. Tampilkan Koin Kripto yang Dibeli\n";
+        cout << "7. Tampilkan Koin Kripto yang Tersedia\n";
+        cout << "8. Keluar\n";
         cout << "================================================\n";
         cout << "\nSelahkan Masukan Pilihan Anda: ";
         cin >> pilihan;
