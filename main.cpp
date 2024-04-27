@@ -49,7 +49,6 @@ void displayBeli()
         cout << "Belum ada koin kripto yang dibeli\n";
     }
 }
-
 void insertFirst(KoinKripto koin)
 {
     Node *newNode = new Node;
@@ -265,6 +264,8 @@ int main()
 
     do
     {
+        cout << "\n=== Selamat Datang di Aplikasi Kriptox! ===\n";
+        cout << "\nBerikut Menu Andalan Kami:\n";
         cout << "\n=== MENU ===\n";
         cout << "1. Register\n";
         cout << "2. Login\n";
@@ -273,7 +274,8 @@ int main()
         cout << "5. Tampilkan Koin Kripto yang Dibeli\n";
         cout << "6. Tampilkan Koin Kripto yang Tersedia\n";
         cout << "7. Keluar\n";
-        cout << "Pilihan: ";
+        cout << "================================================\n";
+        cout << "\nSelahkan Masukan Pilihan Anda: ";
         cin >> pilihan;
 
         if (pilihan == 1)
