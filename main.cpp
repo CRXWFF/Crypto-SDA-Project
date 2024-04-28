@@ -3,11 +3,13 @@
 #include <fstream>
 #include <conio.h>
 #include <iomanip>
+#include <sstream>
 using namespace std;
 
 struct UserData
 {
     string username, password;
+    double saldo; 
 };
 
 struct KoinKripto
@@ -25,12 +27,38 @@ struct Node
     Node *next;
 };
 
+struct Riwayat
+{
+    int saldoAwal;
+    string keterangan;
+    int saldoAkhir;
+    Riwayat* prev;
+    Riwayat* next;
+};
+
+
 Node *head = nullptr;
 Node *tail = nullptr;
+Riwayat* riwayatHead = nullptr;
+UserData currentUser;
+double currentUserSaldo = 0;
 
 bool isEmpty()
 {
     return head == nullptr;
+}
+
+void insertRiwayat(double saldoAwal, string keterangan, double saldoAkhir) {
+    Riwayat* newRiwayat = new Riwayat();
+    newRiwayat->saldoAwal = saldoAwal;
+    newRiwayat->keterangan = keterangan;
+    newRiwayat->saldoAkhir = saldoAkhir;
+    newRiwayat->prev = nullptr;
+    newRiwayat->next = riwayatHead;
+    if (riwayatHead != nullptr) {
+        riwayatHead->prev = newRiwayat;
+    }
+    riwayatHead = newRiwayat;
 }
 
 void displayBeli()
@@ -51,6 +79,7 @@ void displayBeli()
         cout << "Belum ada koin kripto yang dibeli\n";
     }
 }
+
 void insertFirst(KoinKripto koin)
 {
     Node *newNode = new Node;
@@ -100,14 +129,13 @@ void beliKripto(string nama, int jumlahBeli, double harga)
             koinDitemukan = true;
             current->data.jumlah += jumlahBeli;
             cout << "Berhasil menambah " << jumlahBeli << " " << nama << endl;
-            break;
+            return;
         }
         current = current->next;
     }
 
     if (!koinDitemukan)
     {
-
         KoinKripto koin;
         koin.nama = nama;
         koin.jumlah = jumlahBeli;
@@ -133,7 +161,8 @@ void tampilkanDaftarKoin()
     }
 }
 
-void beliKoinKripto() {
+void beliKoinKripto()
+{
     string nama;
     int jumlahBeli;
     bool koinDitemukan = false;
@@ -164,47 +193,60 @@ void beliKoinKripto() {
     {
         cout << "Koin tidak ditemukan. Berikut adalah daftar koin yang tersedia:\n";
         tampilkanDaftarKoin();
-
-        char lanjutkan;
-        cout << "Apakah Anda ingin melanjutkan pembelian? (y/n): ";
-        cin >> lanjutkan;
-        if (lanjutkan == 'y' || lanjutkan == 'Y') {
-            beliKoinKripto(); 
-        }
         return;
     }
 
-    cout << "Harga 1 " << nama << " koin adalah: " << hargaKoin << endl;
     cout << "Masukkan jumlah koin yang ingin dibeli: ";
     cin >> jumlahBeli;
 
-    char konfirmasi;
-cout << fixed << setprecision(2); 
-cout << "Anda yakin ingin membeli " << jumlahBeli << " " << nama << " koin dengan total harga " << (jumlahBeli * hargaKoin) << "? (y/n): ";
-    cin >> konfirmasi;
+    if (jumlahBeli > 0)
+    {
+        double totalHarga = jumlahBeli * hargaKoin;
 
-    if (konfirmasi == 'y' || konfirmasi == 'Y') {
-        if (jumlahBeli > 0) {
+        if (currentUser.saldo >= totalHarga)
+        {
+            double saldoSebelum = currentUser.saldo;
             beliKripto(nama, jumlahBeli, hargaKoin);
-        } else {
-            cout << "Jumlah koin yang ingin dibeli tidak valid\n";
+            currentUser.saldo -= totalHarga;
+            
+            cout << "Transaksi berhasil" << endl;
+            // Insert riwayat
+            stringstream ss;
+            ss << "Membeli kripto " << nama << " sebanyak " << jumlahBeli << " dengan total harga " << fixed << setprecision(2) << totalHarga;
+            insertRiwayat(saldoSebelum, ss.str(), currentUser.saldo);
         }
-    } else {
-        cout << "Pembelian dibatalkan.\n";
+        else
+        {
+            cout << "Saldo tidak mencukupi" << endl;
+        }
+    }
+    else
+    {
+        cout << "Jumlah koin yang ingin dibeli tidak valid\n";
     }
 }
 
 void jualKripto(string nama, int jumlahJual)
 {
     Node *current = head;
+    bool koinDitemukan = false;
+
     while (current != nullptr)
     {
         if (current->data.nama == nama)
         {
+            koinDitemukan = true;
             if (current->data.jumlah >= jumlahJual)
             {
+                double saldoSebelum = currentUser.saldo;
                 current->data.jumlah -= jumlahJual;
+                currentUser.saldo += jumlahJual * current->data.harga;
                 cout << "Berhasil menjual " << jumlahJual << " " << nama << endl;
+                // Insert riwayat
+                stringstream ss;
+                double totalHarga = jumlahJual * current->data.harga;
+                ss << "Menjual kripto " << nama << " sebanyak " << jumlahJual << " dengan total harga " << fixed << setprecision(2) << totalHarga;
+                insertRiwayat(saldoSebelum, ss.str(), currentUser.saldo);
                 return;
             }
             else
@@ -215,7 +257,10 @@ void jualKripto(string nama, int jumlahJual)
         }
         current = current->next;
     }
-    cout << "Kripto tidak ditemukan" << endl;
+    if (!koinDitemukan)
+    {
+        cout << "Kripto tidak ditemukan" << endl;
+    }
 }
 
 void registerUser()
@@ -309,6 +354,40 @@ bool loginUser()
     return false;
 }
 
+void topUpSaldo() {
+    double saldoSebelumTopup = currentUserSaldo; // Menyimpan saldo sebelum top up
+    double topUpAmount;
+    cout << "Masukkan jumlah saldo yang ingin ditambahkan: ";
+    cin >> topUpAmount;
+    if (topUpAmount > 0) {
+        // Memperbarui saldo pengguna
+        currentUserSaldo += topUpAmount;
+        // Memasukkan riwayat top up ke dalam riwayat transaksi
+        stringstream ss;
+        ss << "Top up saldo sebesar " << fixed << setprecision(2) << topUpAmount;
+        insertRiwayat(saldoSebelumTopup, ss.str(), currentUserSaldo);
+        cout << "Saldo berhasil ditambahkan. Saldo Anda sekarang: " << fixed << setprecision(2) << currentUserSaldo << endl;
+        currentUser.saldo += topUpAmount;
+    }
+    else {
+        cout << "Jumlah saldo yang dimasukkan tidak valid" << endl;
+    }
+}
+
+void displayRiwayat() {
+    cout << "Riwayat Transaksi:" << endl;
+    Riwayat* current = riwayatHead;
+    while (current != nullptr) {
+        cout << "==============================================" << endl;
+        cout << "Saldo Awal: " << fixed << setprecision(2) << current->saldoAwal << endl;
+        cout << "Keterangan: " << current->keterangan << endl;
+        cout << "Saldo Akhir: " << fixed << setprecision(2) << current->saldoAkhir << endl;
+        cout << "==============================================" << endl;
+        current = current->next;
+    }
+}
+
+
 int main()
 {
     int pilihan;
@@ -321,12 +400,14 @@ int main()
         cout << "\n=== MENU ===\n";
         cout << "1. Register\n";
         cout << "2. Login\n";
-        cout << "3. Top up Saldo\n";
+        cout << "3. Top Up Saldo\n";
         cout << "4. Beli Koin Kripto\n";
         cout << "5. Jual Koin Kripto\n";
         cout << "6. Tampilkan Koin Kripto yang Dibeli\n";
         cout << "7. Tampilkan Koin Kripto yang Tersedia\n";
-        cout << "8. Keluar\n";
+        cout << "8. Tampilkan Saldo\n"; 
+        cout << "9. Riwayat Transaksi\n"; 
+        cout << "9. Keluar\n";
         cout << "================================================\n";
         cout << "\nSelahkan Masukan Pilihan Anda: ";
         cin >> pilihan;
@@ -345,7 +426,14 @@ int main()
         }
         else if (pilihan == 3)
         {
-            cout << "fitur belum jadiiiiii" << endl;
+            if (isLoggedIn)
+            {
+                topUpSaldo();
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
         }
         else if (pilihan == 4)
         {
@@ -369,24 +457,13 @@ int main()
                 cin >> nama;
                 cout << "Masukkan jumlah koin yang ingin dijual: ";
                 cin >> jumlahJual;
-                char konfirmasi;
-                cout << "Anda yakin ingin menjual " << jumlahJual << " " << nama << " koin? (y/n): ";
-                cin >> konfirmasi;
-
-                if (konfirmasi == 'y' || konfirmasi == 'Y')
+                if (jumlahJual > 0)
                 {
-                    if (jumlahJual > 0)
-                    {
-                        jualKripto(nama, jumlahJual);
-                    }
-                    else
-                    {
-                        cout << "Jumlah koin yang ingin dijual tidak valid\n";
-                    }
+                    jualKripto(nama, jumlahJual);
                 }
                 else
                 {
-                    cout << "Penjualan dibatalkan.\n";
+                    cout << "Jumlah koin yang ingin dijual tidak valid\n";
                 }
             }
             else
@@ -418,7 +495,29 @@ int main()
                 cout << "Anda harus login terlebih dahulu" << endl;
             }
         }
-    } while (pilihan != 8);
+        else if (pilihan == 8)
+        {
+            if (isLoggedIn)
+            {
+                cout << "Saldo Anda: " << currentUser.saldo << endl;
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
+        }
+        else if (pilihan == 9)
+        {
+            if (isLoggedIn)
+            {
+                displayRiwayat();
+            }
+            else
+            {
+                cout << "Anda harus login terlebih dahulu" << endl;
+            }
+        }
+    } while (pilihan != 10);
     cout << "Program Selesai" << endl;
     Node *current = head;
     while (current != nullptr)
