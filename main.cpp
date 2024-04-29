@@ -144,21 +144,23 @@ void beliKripto(string nama, int jumlahBeli, double harga)
     }
 }
 
-void tampilkanDaftarKoin()
-{
+void tampilkanDaftarKoin() {
     KoinKripto koin[] = {
         {1, "Bitcoin", 600000},
         {2, "Cardano", 15},
         {3, "Ondo", 1000},
         {4, "Binance", 5000},
-        {5, "XRP", 10}};
+        {5, "XRP", 10}
+    };
 
-    cout << "\nDaftar Koin Kripto yang Tersedia:\n";
-    for (const auto &k : koin)
-    {
-        cout << k.no << " "
-             << "Nama: " << k.nama << ", Harga: " << k.harga << endl;
+    cout << "+-----+-------------+------------+" << endl;
+    cout << "| No. |    Nama     |   Harga    |" << endl;
+    cout << "+-----+-------------+------------+" << endl;
+
+    for (const auto &k : koin) {
+        cout << "| " << setw(3) << k.no << " | " << setw(11) << k.nama << " | " << setw(10) << k.harga << " |" << endl;
     }
+    cout << "+-----+-------------+------------+" << endl;
 }
 
 void beliKoinKripto()
@@ -210,7 +212,6 @@ void beliKoinKripto()
             currentUser.saldo -= totalHarga;
             
             cout << "Transaksi berhasil" << endl;
-            // Insert riwayat
             stringstream ss;
             ss << "Membeli kripto " << nama << " sebanyak " << jumlahBeli << " dengan total harga " << fixed << setprecision(2) << totalHarga;
             insertRiwayat(saldoSebelum, ss.str(), currentUser.saldo);
@@ -242,7 +243,7 @@ void jualKripto(string nama, int jumlahJual)
                 current->data.jumlah -= jumlahJual;
                 currentUser.saldo += jumlahJual * current->data.harga;
                 cout << "Berhasil menjual " << jumlahJual << " " << nama << endl;
-                // Insert riwayat
+                
                 stringstream ss;
                 double totalHarga = jumlahJual * current->data.harga;
                 ss << "Menjual kripto " << nama << " sebanyak " << jumlahJual << " dengan total harga " << fixed << setprecision(2) << totalHarga;
@@ -355,14 +356,14 @@ bool loginUser()
 }
 
 void topUpSaldo() {
-    double saldoSebelumTopup = currentUserSaldo; // Menyimpan saldo sebelum top up
+    double saldoSebelumTopup = currentUserSaldo; 
     double topUpAmount;
     cout << "Masukkan jumlah saldo yang ingin ditambahkan: ";
     cin >> topUpAmount;
     if (topUpAmount > 0) {
-        // Memperbarui saldo pengguna
+        
         currentUserSaldo += topUpAmount;
-        // Memasukkan riwayat top up ke dalam riwayat transaksi
+
         stringstream ss;
         ss << "Top up saldo sebesar " << fixed << setprecision(2) << topUpAmount;
         insertRiwayat(saldoSebelumTopup, ss.str(), currentUserSaldo);
@@ -409,7 +410,7 @@ int main()
         cout << "9. Riwayat Transaksi\n"; 
         cout << "9. Keluar\n";
         cout << "================================================\n";
-        cout << "\nSelahkan Masukan Pilihan Anda: ";
+        cout << "\nSilahkan Masukan Pilihan Anda: ";
         cin >> pilihan;
 
         if (pilihan == 1)
